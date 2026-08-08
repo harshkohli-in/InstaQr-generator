@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insta QR Code Generator</title>
+
+    <!-- Modern, Fast & Stable QR Code Engine -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+
+    <style>
+        /* Base Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Perfectly Centered Animated Fluid Background */
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Glassmorphic App Containment Card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            padding: 40px 30px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            color: #ffffff;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0.85);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        }
+
+        p.subtitle {
+            font-size: 0.9rem;
+            opacity: 0.85;
+            margin-bottom: 25px;
+        }
+
+        /* Input Elements Box Layout */
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .input-group span {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 14px 15px 14px 35px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            outline: none;
+            color: #ffffff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .input-group input:focus {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 0 10px rgba(255,255,255,0.1);
+        }
+
+        /* CTA Interactive Actions */
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #8a3ab9, #e95950);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(233, 89, 80, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(233, 89, 80, 0.4);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        /* Dynamic Engine Rendering Target Box */
+        #qr-section {
+            margin-top: 30px;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qr-wrapper {
+            background: #ffffff;
+            padding: 16px;
+            border-radius: 16px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* Locked Layout For Output Canvas Engine */
+        #qrcode {
+            display: block;
+            max-width: 100%;
+            height: auto;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        .success-text {
+            font-size: 0.8rem;
+            margin-top: 15px;
+            opacity: 0.8;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 0.5;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0.5;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="glass-card">
+
+        <h1>📸 InstaQR Generator</h1>
+
+        <p class="subtitle">
+            Enter your username and get an instant QR code
+        </p>
+
+        <div class="input-group">
+
+            <span>@</span>
+
+            <input
+                type="text"
+                id="username"
+                placeholder="instagram_username"
+                autocomplete="off"
+            >
+
+        </div>
+
+        <button onclick="generateQR()">
+            ✨ Generate QR Code
+        </button>
+
+        <!-- Fixed Center Render Output Section -->
+        <div id="qr-section">
+
+            <div class="qr-wrapper">
+                <canvas id="qrcode"></canvas>
+            </div>
+
+            <p class="success-text">
+                🎉 Scan to visit the profile instantly!
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        function generateQR() {
+
+            const username =
+                document.getElementById("username").value.trim();
+
+            const qrSection =
+                document.getElementById("qr-section");
+
+            const qrCanvas =
+                document.getElementById("qrcode");
+
+
+            if (username === "") {
+
+                alert("Please enter a valid Instagram username!");
+
+                return;
+
+            }
+
+
+            // Fixed Instagram Profile URL
+            const profileUrl =
+                "https://www.instagram.com/" + username + "/";
+
+
+            // Generate QR Code
+            new QRious({
+
+                element: qrCanvas,
+
+                value: profileUrl,
+
+                size: 180,
+
+                background: "#ffffff",
+
+                foreground: "#000000",
+
+                level: "H"
+
+            });
+
+
+            // Show QR section
+            qrSection.style.display = "flex";
+
+        }
+
+    </script>
+
+</body>
+</html>
